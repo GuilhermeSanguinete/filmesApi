@@ -33,3 +33,13 @@ exports.createFilme = (req, res) => {
     saveFilmes(filmes);
     res.status(201).json(newFilme);
 }
+
+exports.deleteFilme = (req, res) => {
+  let filmes = loadFilmes();
+  const index = filmes.findIndex(b => b.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ message: 'Filme não encontrado' });
+
+  const deleted = filmes.splice(index, 1);
+  saveBooks(filmes);
+  res.json(deleted[0]);
+};
