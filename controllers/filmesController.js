@@ -27,7 +27,9 @@ exports.createFilme = (req, res) => {
     const newFilme = {
         id: Date.now(),
         nome: req.body.nome,
-        ano: req.body.ano
+        ano: req.body.ano,
+        categoria: req.body.categoria,
+        assistido: req.body.assistido
     }
     filmes.push(newFilme);
     saveFilmes(filmes);

@@ -1,7 +1,30 @@
 [
   {
-    "id": 1753311575616,
-    "nome": "O Hobbit",
-    "ano": "2012"
+    "id": 1753549757132,
+    "nome": "Interestelar",
+    "ano": 2014,
+    "categoria": "Ficção Científica",
+    "assistido": true
+  },
+  {
+    "id": 1753549764888,
+    "nome": "Oppenheimer",
+    "ano": 2023,
+    "categoria": "Drama",
+    "assistido": false
+  },
+  {
+    "id": 1753549769893,
+    "nome": "Toy Story",
+    "ano": 1995,
+    "categoria": "Animação",
+    "assistido": true
+  },
+  {
+    "id": 1753549774687,
+    "nome": "John Wick",
+    "ano": 2014,
+    "categoria": "Ação",
+    "assistido": true
   }
 ]
