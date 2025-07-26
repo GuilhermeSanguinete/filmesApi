@@ -40,6 +40,16 @@ exports.deleteFilme = (req, res) => {
   if (index === -1) return res.status(404).json({ message: 'Filme não encontrado' });
 
   const deleted = filmes.splice(index, 1);
-  saveBooks(filmes);
+  saveFilmes(filmes);
   res.json(deleted[0]);
+};
+
+exports.updateFilme = (req, res) => {
+  const filmes = loadFilmes();
+  const index = filmes.findIndex(b => b.id === parseInt(req.params.id));
+  if (index === -1) return res.status(404).json({ message: 'Filme não encontrado' });
+
+  filmes[index] = { ...filmes[index], ...req.body };
+  saveFilmes(filmes);
+  res.json(filmes[index]);
 };
