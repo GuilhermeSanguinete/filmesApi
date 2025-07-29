@@ -71,7 +71,7 @@ exports.deleteFilme = (req, res) => {
         saveFilmes(filmes);
         res.json(deleted[0]);
     }
-    catch {
+    catch (ex){
         console.error("Erro ao deletar filme", ex.message);
     }
 };
