@@ -71,7 +71,7 @@ exports.deleteFilme = (req, res) => {
         saveFilmes(filmes);
         res.json(deleted[0]);
     }
-    catch (ex){
+    catch (ex) {
         console.error("Erro ao deletar filme", ex.message);
     }
 };
@@ -86,7 +86,7 @@ exports.updateFilme = (req, res) => {
         saveFilmes(filmes);
         res.json(filmes[index]);
     }
-    catch {
+    catch (ex) {
         console.error("Erro ao atualizar filme", ex.message);
     }
 };
