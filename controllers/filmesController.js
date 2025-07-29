@@ -6,7 +6,7 @@ function loadFilmes() {
     try {
         return JSON.parse(fs.readFileSync(filepath, 'utf8'));
     }
-    catch{
+    catch (ex){
         console.error("Erro ao carregar filmes", ex.message)
     }
 }
