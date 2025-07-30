@@ -90,3 +90,14 @@ exports.updateFilme = (req, res) => {
         console.error("Erro ao atualizar filme", ex.message);
     }
 };
+
+exports.getDetalhesCatalogo = (req, res) => {
+    const filmes = loadFilmes();
+    const tamanho = filmes.length;
+    const ultimo = filmes[tamanho - 1];
+
+    res.json({
+        'Tamanho do catálogo:': tamanho,
+        "Último cadastro": ultimo.nome
+    })
+}
