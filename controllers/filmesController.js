@@ -92,12 +92,17 @@ exports.updateFilme = (req, res) => {
 };
 
 exports.getDetalhesCatalogo = (req, res) => {
-    const filmes = loadFilmes();
-    const tamanho = filmes.length;
-    const ultimo = filmes[tamanho - 1];
+    try {
+        const filmes = loadFilmes();
+        const tamanho = filmes.length;
+        const ultimo = filmes[tamanho - 1];
 
-    res.json({
-        'Tamanho do catálogo:': tamanho,
-        "Último cadastro": ultimo.nome
-    })
+        res.json({
+            'Tamanho do catálogo:': tamanho,
+            'Último cadastro': ultimo.nome
+        })
+    }
+    catch (ex) {
+        console.error("Erro ao verificar detalhes do catálogo:", ex.message);
+    }
 }
