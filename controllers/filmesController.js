@@ -2,13 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const filepath = path.join(__dirname, '../datas/filmes.json');
 
+// Funções utilitárias
 function loadFilmes() {
     try {
-        return JSON.parse(fs.readFileSync(filepath, 'utf8'));
-    }
-    catch (ex) {
-        console.error("Erro ao carregar filmes", ex.message);
-        return null;
+        const data = fs.readFileSync(filepath, 'utf8');
+        return JSON.parse(data);
+    } catch (ex) {
+        console.error("Erro ao carregar filmes:", ex.message);
+        return [];
     }
 }
 
@@ -20,89 +21,81 @@ function saveFilmes(filmes) {
     }
 }
 
-exports.getAllFilmes = (req, res) => {
-    try {
-        const filmes = loadFilmes();
-        res.json(filmes);
-    } catch (ex) {
-        console.error("Erro ao consultar filmes:", ex.message);
-    }
+function findFilmeIndexById(filmes, id) {
+    return filmes.findIndex(f => f.id === id);
 }
+
+// Rotas
+exports.getAllFilmes = (req, res) => {
+    const filmes = loadFilmes();
+    res.json({ success: true, data: filmes });
+};
 
 exports.getFilmesById = (req, res) => {
-    try {
-        const filmes = loadFilmes();
-        const filme = filmes.find(a => a.id === parseInt(req.params.id));
-        if (!filme) return res.status(404).json({ message: 'Filme não encontrado' });
-        res.json(filme);
+    const filmes = loadFilmes();
+    const filme = filmes.find(f => f.id === parseInt(req.params.id));
+    if (!filme) {
+        return res.status(404).json({ success: false, message: 'Filme não encontrado' });
     }
-    catch (ex) {
-        console.error("Erro ao consultar filme por Id:", ex.message);
-    }
-
-}
+    res.json({ success: true, data: filme });
+};
 
 exports.createFilme = (req, res) => {
-    try {
-        const filmes = loadFilmes();
-        const newFilme = {
-            id: Date.now(),
-            nome: req.body.nome,
-            ano: req.body.ano,
-            categoria: req.body.categoria,
-            assistido: req.body.assistido
-        }
-        filmes.push(newFilme);
-        saveFilmes(filmes);
-        res.status(201).json(newFilme);
+    const { nome, ano, categoria, assistido } = req.body;
+
+    if (!nome || !ano || !categoria) {
+        return res.status(400).json({ success: false, message: 'Campos obrigatórios: nome, ano, categoria' });
     }
-    catch (ex) {
-        console.error("Erro ao criar filme:", ex.message);
-    }
-}
+
+    const filmes = loadFilmes();
+    const newFilme = {
+        id: Date.now(),
+        nome,
+        ano,
+        categoria,
+        assistido: assistido ?? false
+    };
+    filmes.push(newFilme);
+    saveFilmes(filmes);
+
+    res.status(201).json({ success: true, data: newFilme });
+};
 
 exports.deleteFilme = (req, res) => {
-    try {
-        let filmes = loadFilmes();
-        const index = filmes.findIndex(b => b.id === parseInt(req.params.id));
-        if (index === -1) return res.status(404).json({ message: 'Filme não encontrado' });
+    const filmes = loadFilmes();
+    const index = findFilmeIndexById(filmes, parseInt(req.params.id));
 
-        const deleted = filmes.splice(index, 1);
-        saveFilmes(filmes);
-        res.json(deleted[0]);
+    if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Filme não encontrado' });
     }
-    catch (ex) {
-        console.error("Erro ao deletar filme", ex.message);
-    }
+
+    const [deleted] = filmes.splice(index, 1);
+    saveFilmes(filmes);
+
+    res.json({ success: true, data: deleted });
 };
 
 exports.updateFilme = (req, res) => {
-    try {
-        const filmes = loadFilmes();
-        const index = filmes.findIndex(b => b.id === parseInt(req.params.id));
-        if (index === -1) return res.status(404).json({ message: 'Filme não encontrado' });
+    const filmes = loadFilmes();
+    const index = findFilmeIndexById(filmes, parseInt(req.params.id));
 
-        filmes[index] = { ...filmes[index], ...req.body };
-        saveFilmes(filmes);
-        res.json(filmes[index]);
+    if (index === -1) {
+        return res.status(404).json({ success: false, message: 'Filme não encontrado' });
     }
-    catch (ex) {
-        console.error("Erro ao atualizar filme", ex.message);
-    }
+
+    filmes[index] = { ...filmes[index], ...req.body };
+    saveFilmes(filmes);
+
+    res.json({ success: true, data: filmes[index] });
 };
 
 exports.getDetalhesCatalogo = (req, res) => {
-    try {
-        const filmes = loadFilmes();
-        const tamanho = filmes.length;
-        const ultimo = filmes[tamanho - 1];
-
-        res.json({
-            'Tamanho do catálogo:': tamanho,
-            'Último cadastro': ultimo.nome
-        })
-    }
-    catch (ex) {
-        console.error("Erro ao verificar detalhes do catálogo:", ex.message);
-    }
-}
+    const filmes = loadFilmes();
+    res.json({
+        success: true,
+        data: {
+            tamanho: filmes.length,
+            ultimoCadastro: filmes.length ? filmes[filmes.length - 1].nome : null
+        }
+    });
+};
