@@ -41,24 +41,29 @@ exports.getFilmesById = (req, res) => {
 };
 
 exports.createFilme = (req, res) => {
-    const { nome, ano, categoria, assistido } = req.body;
+    try {
+        const { nome, ano, categoria, assistido } = req.body;
 
-    if (!nome || !ano || !categoria) {
-        return res.status(400).json({ success: false, message: 'Campos obrigatórios: nome, ano, categoria' });
+        if (!nome || !ano || !categoria) {
+            return res.status(400).json({ success: false, message: 'Campos obrigatórios: nome, ano, categoria' });
+        }
+
+        const filmes = loadFilmes();
+        const newFilme = {
+            id: Date.now(),
+            nome,
+            ano,
+            categoria,
+            assistido: assistido ?? false
+        };
+        filmes.push(newFilme);
+        saveFilmes(filmes);
+
+        res.status(201).json({ success: true, data: newFilme });
     }
-
-    const filmes = loadFilmes();
-    const newFilme = {
-        id: Date.now(),
-        nome,
-        ano,
-        categoria,
-        assistido: assistido ?? false
-    };
-    filmes.push(newFilme);
-    saveFilmes(filmes);
-
-    res.status(201).json({ success: true, data: newFilme });
+    catch (error){
+        res.status(400).json({ error: 'Erro ao cadastar novo filme.'})
+    }
 };
 
 exports.deleteFilme = (req, res) => {
